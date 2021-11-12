@@ -1,24 +1,45 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { FC, ChangeEvent, useState } from 'react';
 import './App.css';
+import TodoWork from './components/TodoWork';
+import {ITask} from './Interface';
 
-function App() {
+const App: FC = () => {
+
+  const [work, setWork] = useState<string>("");
+  const [time, setTime] = useState<number>(0);
+  const [todo, setTodo] = useState<ITask[]>([]);
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    if(event.target.name === "task"){
+      setWork(event.target.value);
+    } else {
+      setTime(Number(event.target.value));
+    }
+  };
+
+  const addTask = (): void => {
+     const newWork = { taskName: work, deadLine: time};
+      setTodo([...todo, newWork]);  
+      setWork("");
+      setTime(0);
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="header">
+      <div className="inputContainer">
+      <input type="text" value={work} placeholder="Task..." name="task" onChange={handleChange}/>
+      <input type="number" placeholder="DeadLine" name="deadLine" onChange={handleChange}/> 
+      </div>
+      <button onClick={addTask}>Add</button>
+      </div>
+      <div className="todoList">
+          {
+            todo.map((todo: ITask, index: number) => {
+              return <TodoWork key={index} task={todo}/>
+            })
+          }
+      </div>
     </div>
   );
 }
